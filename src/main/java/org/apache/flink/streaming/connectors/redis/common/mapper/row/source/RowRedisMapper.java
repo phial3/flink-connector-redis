@@ -4,12 +4,12 @@ import org.apache.flink.streaming.connectors.redis.common.hanlder.RedisMapperHan
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommand;
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommandBaseDescription;
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisMapper;
+import org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_COMMAND;
 
 /** row redis mapper. @Author: jeff.zou @Date: 2022/3/7.14:59 */
 public class RowRedisMapper<OUT> implements RedisMapper<OUT>, RedisMapperHandler {
@@ -23,7 +23,7 @@ public class RowRedisMapper<OUT> implements RedisMapper<OUT>, RedisMapperHandler
     @Override
     public Map<String, String> requiredContext() {
         Map<String, String> require = new HashMap<>();
-        require.put(REDIS_COMMAND, getRedisCommand().name());
+        require.put(RedisValidator.REDIS_COMMAND, getRedisCommand().name());
         return require;
     }
 

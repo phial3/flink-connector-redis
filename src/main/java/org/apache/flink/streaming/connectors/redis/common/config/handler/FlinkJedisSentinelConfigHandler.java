@@ -22,6 +22,7 @@ import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisConfi
 import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisSentinelConfig;
 import org.apache.flink.streaming.connectors.redis.common.config.RedisOptions;
 import org.apache.flink.streaming.connectors.redis.common.hanlder.FlinkJedisConfigHandler;
+import org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator;
 import org.apache.flink.util.Preconditions;
 
 import java.util.Arrays;
@@ -30,8 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_MODE;
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_SENTINEL;
 
 /** */
 public class FlinkJedisSentinelConfigHandler implements FlinkJedisConfigHandler {
@@ -60,7 +59,7 @@ public class FlinkJedisSentinelConfigHandler implements FlinkJedisConfigHandler 
     @Override
     public Map<String, String> requiredContext() {
         Map<String, String> require = new HashMap<>();
-        require.put(REDIS_MODE, REDIS_SENTINEL);
+        require.put(RedisValidator.REDIS_MODE, RedisValidator.REDIS_SENTINEL);
         return require;
     }
 

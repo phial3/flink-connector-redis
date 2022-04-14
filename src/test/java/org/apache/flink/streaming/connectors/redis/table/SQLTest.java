@@ -2,20 +2,18 @@ package org.apache.flink.streaming.connectors.redis.table;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommand;
+import org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 import org.junit.Test;
 
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_COMMAND;
-
 /** Created by jeff.zou on 2020/9/10. */
 public class SQLTest {
 
-    public static final String CLUSTERNODES =
-            "10.11.80.147:7000,10.11.80.147:7001,10.11.80.147:8000,10.11.80.147:8001,10.11.80.147:9000,10.11.80.147:9001";
-    public static final String PASSWORD = "*****";
+    public static final String CLUSTERNODES = "127.0.0.1:6379";
+    public static final String PASSWORD = "123456aA";
 
     @Test
     public void testNoPrimaryKeyInsertSQL() throws Exception {
@@ -27,10 +25,10 @@ public class SQLTest {
 
         String ddl =
                 "create table sink_redis(username VARCHAR, passport time(3)) with ( 'connector'='redis', "
-                        + "'host'='10.11.80.147','port'='7000', 'redis-mode'='single','password'='"
+                        + "'host'='127.0.0.1','port'='6379', 'redis-mode'='single','password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.SET
                         + "')";
@@ -58,7 +56,7 @@ public class SQLTest {
                         + "','redis-mode'='cluster', 'password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.HSET
                         + "', 'maxIdle'='2', 'minIdle'='1'  )";
@@ -85,7 +83,7 @@ public class SQLTest {
                         + "','redis-mode'='cluster', 'password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.HGET
                         + "', 'maxIdle'='2', 'minIdle'='1', 'lookup.cache.max-rows'='10', 'lookup.cache.ttl'='10', 'lookup.max-retries'='3'  )";
@@ -97,8 +95,7 @@ public class SQLTest {
                         + "'fields.level.kind'='sequence',  'fields.level.start'='1',  'fields.level.end'='9'"
                         + ")";
 
-        String sink =
-                "create table sink_table(username varchar, level varchar,age varchar) with ('connector'='print')";
+        String sink = "create table sink_table(username varchar, level varchar,age varchar) with ('connector'='print')";
 
         tEnv.executeSql(source);
         tEnv.executeSql(dim);
@@ -129,7 +126,7 @@ public class SQLTest {
                         + "','redis-mode'='cluster', 'password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.GET
                         + "', 'maxIdle'='2', 'minIdle'='1', 'lookup.cache.max-rows'='10', 'lookup.cache.ttl'='10', 'lookup.max-retries'='3'  )";
@@ -180,7 +177,7 @@ public class SQLTest {
                         + "','redis-mode'='cluster','password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.SET
                         + "')";
@@ -204,7 +201,7 @@ public class SQLTest {
                         + "','redis-mode'='cluster','password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.HDEL
                         + "') ";
@@ -225,7 +222,7 @@ public class SQLTest {
                         + "','redis-mode'='cluster','password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.DEL
                         + "') ";
@@ -246,7 +243,7 @@ public class SQLTest {
                         + "','redis-mode'='cluster','password'='"
                         + PASSWORD
                         + "','"
-                        + REDIS_COMMAND
+                        + RedisValidator.REDIS_COMMAND
                         + "'='"
                         + RedisCommand.SREM
                         + "') ";

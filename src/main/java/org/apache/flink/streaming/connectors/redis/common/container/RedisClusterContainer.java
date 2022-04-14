@@ -36,7 +36,8 @@ public class RedisClusterContainer implements RedisCommandsContainer, Closeable 
         // message passed as argument. Here we use it to monitor
         // if we can communicate with the cluster.
 
-        jedisCluster.echo("Test");
+        //jedisCluster.echo("Test");
+        //jedisCluster.getConnectionFromSlot(0);
     }
 
     @Override

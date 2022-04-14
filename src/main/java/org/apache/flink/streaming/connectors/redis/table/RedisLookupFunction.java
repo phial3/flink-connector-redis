@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.flink.streaming.connectors.redis.table.RedisDynamicTableFactory.CACHE_SEPERATOR;
-
-/** redis lookup function. @Author: jeff.zou @Date: 2022/3/7.14:33 */
+/**
+ * redis lookup function. @Author: jeff.zou @Date: 2022/3/7.14:33
+ */
 public class RedisLookupFunction extends TableFunction<RowData> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RedisLookupFunction.class);
@@ -85,18 +85,16 @@ public class RedisLookupFunction extends TableFunction<RowData> {
                     break;
                 case HGET:
                     if (loadAll) {
-                        Map<String, String> map =
-                                (Map<String, String>) cache.getIfPresent(String.valueOf(keys[0]));
+                        Map<String, String> map = (Map<String, String>) cache.getIfPresent(String.valueOf(keys[0]));
                         if (map != null) {
                             createRowData(keys, map);
                             return;
                         }
                     } else {
-                        String key =
-                                new StringBuilder(String.valueOf(keys[0]))
-                                        .append(CACHE_SEPERATOR)
-                                        .append(String.valueOf(keys[1]))
-                                        .toString();
+                        String key = new StringBuilder(String.valueOf(keys[0]))
+                                .append(RedisDynamicTableFactory.CACHE_SEPERATOR)
+                                .append(String.valueOf(keys[1]))
+                                .toString();
                         genericRowData = (GenericRowData) cache.getIfPresent(key);
                     }
                     break;
@@ -158,7 +156,7 @@ public class RedisLookupFunction extends TableFunction<RowData> {
                 if (cache != null && result != null) {
                     String key =
                             new StringBuilder(String.valueOf(keys[0]))
-                                    .append(CACHE_SEPERATOR)
+                                    .append(RedisDynamicTableFactory.CACHE_SEPERATOR)
                                     .append(String.valueOf(keys[1]))
                                     .toString();
                     cache.put(key, rowData);
@@ -202,13 +200,12 @@ public class RedisLookupFunction extends TableFunction<RowData> {
             throw e;
         }
 
-        this.cache =
-                cacheMaxSize == -1 || cacheTtl == -1
-                        ? null
-                        : CacheBuilder.newBuilder()
-                                .expireAfterWrite(cacheTtl, TimeUnit.SECONDS)
-                                .maximumSize(cacheMaxSize)
-                                .build();
+        this.cache = cacheMaxSize == -1 || cacheTtl == -1
+                ? null
+                : CacheBuilder.newBuilder()
+                .expireAfterWrite(cacheTtl, TimeUnit.SECONDS)
+                .maximumSize(cacheMaxSize)
+                .build();
     }
 
     @Override

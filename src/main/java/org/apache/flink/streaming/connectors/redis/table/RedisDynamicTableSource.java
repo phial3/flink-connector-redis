@@ -16,7 +16,9 @@ import org.apache.flink.util.Preconditions;
 
 import java.util.Map;
 
-/** redis dynamic table source. @Author: jeff.zou @Date: 2022/3/7.13:41 */
+/**
+ * redis dynamic table source. @Author: jeff.zou @Date: 2022/3/7.13:41
+ */
 public class RedisDynamicTableSource implements LookupTableSource {
 
     private FlinkJedisConfigBase flinkJedisConfigBase;
@@ -29,8 +31,7 @@ public class RedisDynamicTableSource implements LookupTableSource {
     @Override
     public LookupRuntimeProvider getLookupRuntimeProvider(LookupContext context) {
         return TableFunctionProvider.of(
-                new RedisLookupFunction(
-                        flinkJedisConfigBase, redisMapper, redisCacheOptions, resolvedSchema));
+                new RedisLookupFunction(flinkJedisConfigBase, redisMapper, redisCacheOptions, resolvedSchema));
     }
 
     public RedisDynamicTableSource(
@@ -41,15 +42,13 @@ public class RedisDynamicTableSource implements LookupTableSource {
         Preconditions.checkNotNull(resolvedSchema, "resolvedSchema should not be null");
         this.config = config;
 
-        redisMapper =
-                RedisHandlerServices.findRedisHandler(RedisMapperHandler.class, properties)
-                        .createRedisMapper(config);
+        redisMapper = RedisHandlerServices.findRedisHandler(RedisMapperHandler.class, properties).createRedisMapper(config);
         this.properties = properties;
         this.resolvedSchema = resolvedSchema;
         this.config = config;
-        flinkJedisConfigBase =
-                RedisHandlerServices.findRedisHandler(FlinkJedisConfigHandler.class, properties)
-                        .createFlinkJedisConfig(config);
+
+        flinkJedisConfigBase = RedisHandlerServices.findRedisHandler(FlinkJedisConfigHandler.class, properties).createFlinkJedisConfig(config);
+
         redisCacheOptions =
                 new RedisCacheOptions.Builder()
                         .setCacheTTL(config.get(RedisOptions.LOOKUP_CHCHE_TTL))

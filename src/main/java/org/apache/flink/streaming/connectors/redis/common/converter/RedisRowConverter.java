@@ -6,12 +6,11 @@ import org.apache.flink.table.data.TimestampData;
 import org.apache.flink.table.data.binary.BinaryStringData;
 import org.apache.flink.table.types.logical.DecimalType;
 import org.apache.flink.table.types.logical.LogicalType;
+import org.apache.flink.table.types.logical.utils.LogicalTypeChecks;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Base64;
-
-import static org.apache.flink.table.types.logical.utils.LogicalTypeChecks.getPrecision;
 
 /** redis serialize . @Author: jeff.zou @Date: 2022/3/10.13:17 */
 public class RedisRowConverter {
@@ -68,7 +67,7 @@ public class RedisRowConverter {
             case INTERVAL_YEAR_MONTH:
                 return Integer::valueOf;
             case TIME_WITHOUT_TIME_ZONE:
-                precision = getPrecision(fieldType);
+                precision = LogicalTypeChecks.getPrecision(fieldType);
                 if (precision < TIMESTAMP_PRECISION_MIN || precision > TIMESTAMP_PRECISION_MAX) {
                     throw new UnsupportedOperationException(
                             String.format(
@@ -78,7 +77,7 @@ public class RedisRowConverter {
                 return Integer::valueOf;
             case TIMESTAMP_WITHOUT_TIME_ZONE:
             case TIMESTAMP_WITH_LOCAL_TIME_ZONE:
-                precision = getPrecision(fieldType);
+                precision = LogicalTypeChecks.getPrecision(fieldType);
                 if (precision < TIMESTAMP_PRECISION_MIN || precision > TIMESTAMP_PRECISION_MAX) {
                     throw new UnsupportedOperationException(
                             String.format(
@@ -123,7 +122,7 @@ public class RedisRowConverter {
             case INTERVAL_YEAR_MONTH:
                 return (rowData, index) -> String.valueOf(rowData.getInt(index));
             case TIME_WITHOUT_TIME_ZONE:
-                precision = getPrecision(fieldType);
+                precision = LogicalTypeChecks.getPrecision(fieldType);
                 if (precision < TIMESTAMP_PRECISION_MIN || precision > TIMESTAMP_PRECISION_MAX) {
                     throw new UnsupportedOperationException(
                             String.format(
@@ -140,7 +139,7 @@ public class RedisRowConverter {
                 return (rowData, index) -> String.valueOf(rowData.getDouble(index));
             case TIMESTAMP_WITHOUT_TIME_ZONE:
             case TIMESTAMP_WITH_LOCAL_TIME_ZONE:
-                precision = getPrecision(fieldType);
+                precision = LogicalTypeChecks.getPrecision(fieldType);
                 if (precision < TIMESTAMP_PRECISION_MIN || precision > TIMESTAMP_PRECISION_MAX) {
                     throw new UnsupportedOperationException(
                             String.format(

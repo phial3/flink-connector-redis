@@ -10,38 +10,24 @@ import org.apache.flink.streaming.connectors.redis.common.hanlder.RedisHandlerSe
 import org.apache.flink.streaming.connectors.redis.common.hanlder.RedisMapperHandler;
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommand;
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisSinkMapper;
+import org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator;
 import org.apache.flink.streaming.connectors.redis.table.RedisSinkFunction;
+import org.apache.flink.streaming.connectors.redis.table.SQLTest;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.catalog.ResolvedSchema;
 import org.apache.flink.table.data.StringData;
 import org.apache.flink.table.data.binary.BinaryRowData;
 import org.apache.flink.table.data.writer.BinaryRowWriter;
 import org.apache.flink.table.types.DataType;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import redis.embedded.RedisServer;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_COMMAND;
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_MODE;
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_SINGLE;
-import static org.apache.flink.streaming.connectors.redis.table.SQLTest.PASSWORD;
-
-/** Created by jeff.zou on 2021/2/26. */
+/**
+ * Created by jeff.zou on 2021/2/26.
+ */
 public class DataStreamTest {
-
-    private RedisServer redisServer;
-
-    @Before
-    public void before() throws Exception {
-        redisServer = RedisServer.builder().port(6379).setting("maxheap 51200").build();
-        redisServer.start();
-    }
-
     /*
     hget tom math
     return: 150
@@ -50,14 +36,12 @@ public class DataStreamTest {
     public void testDateStreamInsert() throws Exception {
 
         Configuration configuration = new Configuration();
-        configuration.setString(REDIS_MODE, REDIS_SINGLE);
-        configuration.setString(REDIS_COMMAND, RedisCommand.HSET.name());
+        configuration.setString(RedisValidator.REDIS_MODE, RedisValidator.REDIS_SINGLE);
+        configuration.setString(RedisValidator.REDIS_COMMAND, RedisCommand.HSET.name());
 
-        RedisSinkMapper redisMapper =
-                (RedisSinkMapper)
-                        RedisHandlerServices.findRedisHandler(
-                                        RedisMapperHandler.class, configuration.toMap())
-                                .createRedisMapper(configuration);
+        RedisSinkMapper redisMapper = (RedisSinkMapper)
+                RedisHandlerServices.findRedisHandler(
+                        RedisMapperHandler.class, configuration.toMap()).createRedisMapper(configuration);
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -74,24 +58,17 @@ public class DataStreamTest {
                 Arrays.asList(DataTypes.STRING(), DataTypes.STRING(), DataTypes.STRING());
         ResolvedSchema resolvedSchema = ResolvedSchema.physical(columnNames, columnDataTypes);
 
-        RedisCacheOptions redisCacheOptions =
-                new RedisCacheOptions.Builder().setCacheMaxSize(100).setCacheTTL(10L).build();
+        RedisCacheOptions redisCacheOptions = new RedisCacheOptions.Builder().setCacheMaxSize(100).setCacheTTL(10L).build();
         FlinkJedisConfigBase conf =
                 new FlinkJedisPoolConfig.Builder()
-                        .setHost("10.11.80.147")
-                        .setPort(7001)
-                        .setPassword(PASSWORD)
+                        .setHost("127.0.0.1")
+                        .setPort(6379)
+                        .setPassword(SQLTest.PASSWORD)
                         .build();
 
-        RedisSinkFunction redisSinkFunction =
-                new RedisSinkFunction<>(conf, redisMapper, redisCacheOptions, resolvedSchema);
+        RedisSinkFunction redisSinkFunction = new RedisSinkFunction<>(conf, redisMapper, redisCacheOptions, resolvedSchema);
 
         dataStream.addSink(redisSinkFunction).setParallelism(1);
         env.execute("RedisSinkTest");
-    }
-
-    @After
-    public void stopRedis() {
-        redisServer.stop();
     }
 }

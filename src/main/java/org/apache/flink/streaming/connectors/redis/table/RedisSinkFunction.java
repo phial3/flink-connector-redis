@@ -86,25 +86,17 @@ public class RedisSinkFunction<IN> extends RichSinkFunction<IN> {
             return;
         }
 
-        String key =
-                redisSinkMapper.getKeyFromData(rowData, columnDataTypes.get(0).getLogicalType(), 0);
+        String key = redisSinkMapper.getKeyFromData(rowData, columnDataTypes.get(0).getLogicalType(), 0);
         if (redisCommand.getRedisOperationType() == RedisOperationType.DEL) {
             deleteInvoke(key, rowData);
             return;
         }
 
-        String value =
-                redisSinkMapper.getValueFromData(
-                        rowData, columnDataTypes.get(1).getLogicalType(), 1);
+        String value = redisSinkMapper.getValueFromData(rowData, columnDataTypes.get(1).getLogicalType(), 1);
         String field = null;
-        if (redisCommand.getRedisDataType() == RedisDataType.HASH
-                || redisCommand.getRedisDataType() == RedisDataType.SORTED_SET) {
-            field =
-                    redisSinkMapper.getFieldFromData(
-                            rowData, columnDataTypes.get(1).getLogicalType(), 1);
-            value =
-                    redisSinkMapper.getValueFromData(
-                            rowData, columnDataTypes.get(2).getLogicalType(), 2);
+        if (redisCommand.getRedisDataType() == RedisDataType.HASH || redisCommand.getRedisDataType() == RedisDataType.SORTED_SET) {
+            field = redisSinkMapper.getFieldFromData(rowData, columnDataTypes.get(1).getLogicalType(), 1);
+            value = redisSinkMapper.getValueFromData(rowData, columnDataTypes.get(2).getLogicalType(), 2);
         }
 
         for (int i = 0; i <= this.maxRetryTimes; i++) {
@@ -215,8 +207,7 @@ public class RedisSinkFunction<IN> extends RichSinkFunction<IN> {
     @Override
     public void open(Configuration parameters) throws Exception {
         try {
-            this.redisCommandsContainer =
-                    RedisCommandsContainerBuilder.build(this.flinkJedisConfigBase);
+            this.redisCommandsContainer = RedisCommandsContainerBuilder.build(this.flinkJedisConfigBase);
             this.redisCommandsContainer.open();
             LOG.info("success to create redis container:{}", this.flinkJedisConfigBase.toString());
         } catch (Exception e) {

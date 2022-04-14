@@ -7,14 +7,13 @@ import org.apache.flink.streaming.connectors.redis.common.hanlder.RedisMapperHan
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommand;
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisCommandDescription;
 import org.apache.flink.streaming.connectors.redis.common.mapper.RedisSinkMapper;
+import org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator;
 import org.apache.flink.table.data.GenericRowData;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.types.logical.LogicalType;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.apache.flink.streaming.connectors.redis.descriptor.RedisValidator.REDIS_COMMAND;
 
 /** base row redis mapper implement. */
 public abstract class RowRedisSinkMapper
@@ -74,7 +73,7 @@ public abstract class RowRedisSinkMapper
     @Override
     public Map<String, String> requiredContext() {
         Map<String, String> require = new HashMap<>();
-        require.put(REDIS_COMMAND, getRedisCommand().name());
+        require.put(RedisValidator.REDIS_COMMAND, getRedisCommand().name());
         return require;
     }
 
